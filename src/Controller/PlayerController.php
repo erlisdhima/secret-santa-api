@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Api\PlayerServiceInterface;
 use App\Dto\CreatePlayerDto;
 use App\Dto\SubmitGiftDto;
-use App\Service\PlayerService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,7 +19,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class PlayerController extends AbstractController
 {
     public function __construct(
-        private readonly PlayerService $playerService,
+        private readonly PlayerServiceInterface $playerService,
         private readonly ValidatorInterface $validator,
         private readonly SerializerInterface $serializer,
     ) {

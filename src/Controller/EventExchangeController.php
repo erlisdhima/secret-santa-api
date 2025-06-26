@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Api\GiftAssignmentServiceInterface;
 use App\Dto\GiftDto;
 use App\Entity\GiftAssignment;
-use App\Entity\Player;
 use App\Enum\EventStatusEnum;
 use App\Repository\EventRepository;
-use App\Service\GiftAssignmentService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,7 +18,7 @@ class EventExchangeController extends AbstractController
 {
     public function __construct(
         private readonly EventRepository $eventRepository,
-        private readonly GiftAssignmentService $giftAssignmentService,
+        private readonly GiftAssignmentServiceInterface $giftAssignmentService,
     ) {
     }
 

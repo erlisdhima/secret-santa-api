@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Api\EventServiceInterface;
 use App\Dto\CreateEventDto;
 use App\Dto\GiftDto;
 use App\Entity\Event;
 use App\Entity\Gift;
 use App\Entity\Player;
 use App\Repository\EventRepository;
-use App\Service\EventService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,7 +22,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class EventController extends AbstractController
 {
     public function __construct(
-        private readonly EventService $eventService,
+        private readonly EventServiceInterface $eventService,
         private readonly EventRepository $eventRepository,
         private readonly ValidatorInterface $validator,
         private readonly SerializerInterface $serializer,

@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Factory;
 
+use App\Api\InviteCodeGeneratorInterface;
 use App\Entity\Event;
 use App\Enum\EventStatusEnum;
-use App\Service\InviteCodeGenerator;
 
 class EventFactory
 {
-    public function __construct(private readonly InviteCodeGenerator $inviteCodeGenerator)
+    public function __construct(private readonly InviteCodeGeneratorInterface $inviteCodeGenerator)
     {
     }
 
