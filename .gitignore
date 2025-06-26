@@ -20,4 +20,3 @@
 ###< friendsofphp/php-cs-fixer ###
 
 api_requests/http-client.private.env.json
-
