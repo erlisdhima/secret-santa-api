@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Dto;
@@ -19,7 +20,7 @@ class CreatePlayerDto
                 'value' => new Assert\NotBlank(),
             ],
             'allowMissingFields' => false,
-        ])
+        ]),
     ])]
     public ?array $preferences = [];
 

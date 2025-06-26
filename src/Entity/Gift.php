@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Entity;
@@ -48,6 +49,7 @@ class Gift
     public function setTitle(string $title): self
     {
         $this->title = $title;
+
         return $this;
     }
 
@@ -59,6 +61,7 @@ class Gift
     public function setCategory(string $category): self
     {
         $this->category = $category;
+
         return $this;
     }
 
@@ -70,6 +73,7 @@ class Gift
     public function setPrice(float $price): self
     {
         $this->price = (string) $price;
+
         return $this;
     }
 
@@ -81,6 +85,7 @@ class Gift
     public function setProductUrl(?string $productUrl): self
     {
         $this->productUrl = $productUrl;
+
         return $this;
     }
 
@@ -92,6 +97,7 @@ class Gift
     public function setEvent(?Event $event): self
     {
         $this->event = $event;
+
         return $this;
     }
 
@@ -103,6 +109,7 @@ class Gift
     public function setGiver(?Player $giver): self
     {
         $this->giver = $giver;
+
         return $this;
     }
 }

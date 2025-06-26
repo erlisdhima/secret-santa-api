@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Service;
@@ -13,8 +14,9 @@ readonly class EventService implements EventServiceInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private EventFactory $eventFactory
-    ) {}
+        private EventFactory $eventFactory,
+    ) {
+    }
 
     public function createEvent(CreateEventDto $createEventDto): Event
     {

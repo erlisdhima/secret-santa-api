@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Controller;
@@ -7,15 +8,16 @@ use App\Dto\CreateEventDto;
 use App\Dto\GiftDto;
 use App\Entity\Event;
 use App\Entity\Gift;
+use App\Entity\Player;
 use App\Repository\EventRepository;
 use App\Service\EventService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class EventController extends AbstractController
 {
@@ -24,7 +26,8 @@ class EventController extends AbstractController
         private readonly EventRepository $eventRepository,
         private readonly ValidatorInterface $validator,
         private readonly SerializerInterface $serializer,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws ExceptionInterface
@@ -73,11 +76,45 @@ class EventController extends AbstractController
         return $this->json($this->getEventData($event));
     }
 
+    #[Route('/api/v1/events/{id}/players', name: 'get_event_players', methods: ['GET'])]
+    public function getEventPlayers(int $id): JsonResponse
+    {
+        $events = $this->eventRepository->findBy(['id' => $id]);
+        $event = \reset($events);
+        if (!$event) {
+            return $this->json(['error' => 'Event not found'], 404);
+        }
+
+        $players = array_map(
+            fn (Player $player) => [
+                'name' => $player->getName(),
+                'preferences' => $player->getPreferences()
+                    ->map(fn ($p) => [
+                        'value' => $p->getValue(),
+                        'type' => $p->getType()->value,
+                    ])
+                    ->toArray(),
+                'gift' => null !== $player->getGift()
+                    ? new GiftDto(
+                        $player->getGift()->getTitle(),
+                        $player->getGift()->getCategory(),
+                        $player->getGift()->getPrice(),
+                        $player->getGift()->getProductUrl(),
+                        $player->getGift()->getGiver()?->getName(),
+                    )
+                    : null,
+            ],
+            $event->getPlayers()->toArray()
+        );
+
+        return $this->json($players);
+    }
+
     #[Route('/api/v1/events/{id}/gifts', name: 'get_submitted_event_gifts', methods: ['GET'])]
     public function getEventGifts(Event $event): JsonResponse
     {
         $gifts = array_map(
-            fn(Gift $gift) => new GiftDto(
+            fn (Gift $gift) => new GiftDto(
                 $gift->getTitle(),
                 $gift->getCategory(),
                 $gift->getPrice(),

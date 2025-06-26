@@ -1,12 +1,13 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Entity;
 
 use App\Enum\EventStatusEnum;
+use App\Repository\EventRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use App\Repository\EventRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
@@ -74,6 +75,7 @@ class Event
     public function setOrganizerName(string $organizerName): self
     {
         $this->organizerName = $organizerName;
+
         return $this;
     }
 
@@ -85,6 +87,7 @@ class Event
     public function setInviteCode(string $inviteCode): self
     {
         $this->inviteCode = $inviteCode;
+
         return $this;
     }
 
@@ -96,6 +99,7 @@ class Event
     public function setMaxPlayers(int $maxPlayers): self
     {
         $this->maxPlayers = $maxPlayers;
+
         return $this;
     }
 
@@ -107,6 +111,7 @@ class Event
     public function setGiftBudget(float $giftBudget): self
     {
         $this->giftBudget = (string) $giftBudget;
+
         return $this;
     }
 
@@ -118,6 +123,7 @@ class Event
     public function setStatus(EventStatusEnum $status): self
     {
         $this->status = $status;
+
         return $this;
     }
 
@@ -129,6 +135,7 @@ class Event
     public function setCreatedAt(\DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
+
         return $this;
     }
 

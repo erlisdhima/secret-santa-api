@@ -37,9 +37,9 @@ class AppFixtures extends Fixture
         $event->setStatus(EventStatusEnum::Running);
         $manager->persist($event);
 
-        for ($i = 1; $i <= 5; $i++) {
+        for ($i = 1; $i <= 5; ++$i) {
             $player = new Player();
-            $player->setName('Player ' . $i);
+            $player->setName('Player '.$i);
             $player->setEvent($event);
             $manager->persist($player);
 

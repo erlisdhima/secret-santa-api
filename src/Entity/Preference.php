@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Entity;
@@ -39,6 +40,7 @@ class Preference
     public function setValue(string $value): self
     {
         $this->value = $value;
+
         return $this;
     }
 
@@ -50,6 +52,7 @@ class Preference
     public function setType(PreferenceTypeEnum $type): self
     {
         $this->type = $type;
+
         return $this;
     }
 
@@ -61,6 +64,7 @@ class Preference
     public function setPlayer(?Player $player): self
     {
         $this->player = $player;
+
         return $this;
     }
 }

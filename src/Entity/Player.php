@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Entity;
@@ -54,6 +55,7 @@ class Player
     public function setName(string $name): self
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -65,6 +67,7 @@ class Player
     public function setEvent(?Event $event): self
     {
         $this->event = $event;
+
         return $this;
     }
 
@@ -102,6 +105,7 @@ class Player
     public function setGift(?Gift $gift): self
     {
         $this->gift = $gift;
+
         return $this;
     }
 
@@ -113,6 +117,7 @@ class Player
     public function setAssignment(?GiftAssignment $assignment): self
     {
         $this->assignment = $assignment;
+
         return $this;
     }
 }

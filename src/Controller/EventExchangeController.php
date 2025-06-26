@@ -1,38 +1,40 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Controller;
 
 use App\Enum\EventStatusEnum;
-use App\Enum\PreferenceTypeEnum;
 use App\Repository\EventRepository;
 use App\Service\GiftAssignmentService;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class EventExchangeController extends AbstractController
 {
     public function __construct(
         private readonly EventRepository $eventRepository,
         private readonly GiftAssignmentService $giftAssignmentService,
-    ) {}
+    ) {
+    }
 
     #[Route('/api/v1/events/{id}/run-gift-exchange', name: 'run_gift_exchange', methods: ['POST'])]
-    public function runExchange(int $id): JsonResponse {
+    public function runExchange(int $id): JsonResponse
+    {
         $event = $this->eventRepository->find($id);
 
         if (!$event) {
             return $this->json(['error' => 'Event not found'], 404);
         }
 
-        if ($event->getStatus() != EventStatusEnum::Running) {
+        if (EventStatusEnum::Running != $event->getStatus()) {
             return $this->json(['error' => 'Exchange cannot be run again or event is closed'], 400);
         }
 
         // remove players without a gift
-        $players = $event->getPlayers()->filter(fn($p) => $p->getGift() !== null)->getValues();
+        $players = $event->getPlayers()->filter(fn ($p) => null !== $p->getGift())->getValues();
 
         if (count($players) < 2) {
             return $this->json(['error' => 'Not enough players with gifts'], Response::HTTP_BAD_REQUEST);
@@ -49,8 +51,8 @@ class EventExchangeController extends AbstractController
             $gift = $assignment->getGift();
 
             $results[] = [
-                'player'   => $receiver->getName(),
-                'gift'     => $gift->getTitle(),
+                'player' => $receiver->getName(),
+                'gift' => $gift->getTitle(),
                 'category' => $gift->getCategory(),
             ];
         }

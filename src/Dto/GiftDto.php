@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Dto;
@@ -11,5 +12,6 @@ readonly class GiftDto
         public float $price,
         public ?string $productUrl,
         public ?string $giverName,
-    ) {}
+    ) {
+    }
 }

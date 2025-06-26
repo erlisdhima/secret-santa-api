@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Service;
@@ -10,7 +11,9 @@ use Symfony\Component\Uid\Ulid;
 readonly class InviteCodeGenerator implements InviteCodeGeneratorInterface
 {
     public function __construct(
-        private EventRepository $eventRepository) {}
+        private EventRepository $eventRepository)
+    {
+    }
 
     public function generate(int $length = 8): string
     {

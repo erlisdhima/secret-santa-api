@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Service;
@@ -8,7 +9,6 @@ use App\Dto\CreatePlayerDto;
 use App\Dto\SubmitGiftDto;
 use App\Entity\Gift;
 use App\Entity\Player;
-use App\Entity\Preference;
 use App\Enum\PreferenceTypeEnum;
 use App\Factory\PlayerFactory;
 use App\Factory\PreferenceFactory;
@@ -25,14 +25,15 @@ readonly class PlayerService implements PlayerServiceInterface
         private PlayerRepository $playerRepository,
         private PlayerFactory $playerFactory,
         private PreferenceFactory $preferenceFactory,
-    ) {}
+    ) {
+    }
 
     public function joinEvent(string $inviteCode, CreatePlayerDto $playerDto): Player
     {
         $event = $this->eventRepository->findOneBy(['inviteCode' => $inviteCode]);
 
         if (!$event) {
-            throw new NotFoundHttpException("Event not found.");
+            throw new NotFoundHttpException('Event not found.');
         }
 
         if ($event->getPlayers()->count() == $event->getMaxPlayers()) {
@@ -68,7 +69,7 @@ readonly class PlayerService implements PlayerServiceInterface
         $player = $this->playerRepository->find($playerId);
 
         if (!$player) {
-            throw new NotFoundHttpException("Player not found.");
+            throw new NotFoundHttpException('Player not found.');
         }
 
         $gift = new Gift();
@@ -90,7 +91,7 @@ readonly class PlayerService implements PlayerServiceInterface
         $player = $this->playerRepository->find($id);
 
         if (!$player) {
-            throw new NotFoundHttpException("Player not found.");
+            throw new NotFoundHttpException('Player not found.');
         }
 
         return $player;

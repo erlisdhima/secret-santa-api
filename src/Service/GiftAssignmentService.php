@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Service;
@@ -16,30 +17,50 @@ readonly class GiftAssignmentService implements GiftAssignmentServiceInterface
     public function __construct(
         private EntityManagerInterface $entityManager,
         private PreferenceRepository $preferenceRepository,
-    ) {}
+    ) {
+    }
 
     /**
-     * Batch assigns gifts to all players
+     * Batch assigns gifts to all players.
      */
-    public function assign(Event $event, array $players): void
+    public function assign(Event $event, ?array $players = null): void
+    {
+        $assignments = $this->generateAssignments($event, $players);
+
+        foreach ($assignments as $a) {
+            $this->entityManager->persist($a);
+        }
+
+        $event->setStatus(EventStatusEnum::Completed);
+        $this->entityManager->flush();
+    }
+
+    public function generateAssignments(Event $event, ?array $players): array
     {
         $availableGifts = $event->getGifts()->toArray();
         $assignments = [];
 
+        if (!$players) {
+            $players = $event->getPlayers();
+        }
+
         foreach ($players as $player) {
-            $playerPrefsInclude = $this->preferenceRepository->getPlayerPreferences($player, PreferenceTypeEnum::Include);
-            $playerPrefsExclude = $this->preferenceRepository->getPlayerPreferences($player, PreferenceTypeEnum::Exclude);
+            $playerPrefsInclude = $this->preferenceRepository
+                ->getPlayerPreferences($player, PreferenceTypeEnum::Include);
+            $playerPrefsExclude = $this->preferenceRepository
+                ->getPlayerPreferences($player, PreferenceTypeEnum::Exclude);
 
             // Exclude gifts from self
             $playerId = $player->getId();
-            $validGifts = array_filter($availableGifts, fn($g) => $g->getGiver()?->getId() !== $playerId);
+            $validGifts = array_filter($availableGifts, fn ($g) => $g->getGiver()?->getId() !== $playerId);
 
             // Prefer gifts matching preferences
             $preferred = array_filter(
-                $validGifts, function ($gift) use ($playerPrefsInclude, $playerPrefsExclude) {
-                return in_array($gift->getCategory(), $playerPrefsInclude, true) &&
-                    !in_array($gift->getCategory(), $playerPrefsExclude, true);
-            });
+                $validGifts,
+                function ($gift) use ($playerPrefsInclude, $playerPrefsExclude) {
+                    return in_array($gift->getCategory(), $playerPrefsInclude, true)
+                        && !in_array($gift->getCategory(), $playerPrefsExclude, true);
+                });
 
             // If no preferred gift, fall back to random
             $finalGifts = $preferred ?: $validGifts;
@@ -55,14 +76,9 @@ readonly class GiftAssignmentService implements GiftAssignmentServiceInterface
             $assignment->setReceiver($player);
 
             $assignments[] = $assignment;
-            $availableGifts = array_filter($availableGifts, fn($g) => $g !== $selected);
+            $availableGifts = array_filter($availableGifts, fn ($g) => $g !== $selected);
         }
 
-        foreach ($assignments as $a) {
-            $this->entityManager->persist($a);
-        }
-
-        $event->setStatus(EventStatusEnum::Completed);
-        $this->entityManager->flush();
+        return $assignments;
     }
 }
