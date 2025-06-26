@@ -84,6 +84,7 @@
         "phpstan/phpstan": "*",
         "phpunit/phpunit": "*",
         "squizlabs/php_codesniffer": "*",
+        "symfony/browser-kit": "7.3.*",
         "symfony/maker-bundle": "^1.63",
         "symplify/phpstan-rules": "*"
     }

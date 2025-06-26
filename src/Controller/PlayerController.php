@@ -51,7 +51,7 @@ class PlayerController extends AbstractController
     /**
      * @throws ExceptionInterface
      */
-    #[Route('/api/v1/events/{id}/gift', name: 'player_submit_gift', methods: ['POST'])]
+    #[Route('/api/v1/events/{id}/submit-gift', name: 'player_submit_gift', methods: ['POST'])]
     public function submitGift(int $id, Request $request): JsonResponse
     {
         $data = $this->serializer->deserialize($request->getContent(), SubmitGiftDto::class, 'json');

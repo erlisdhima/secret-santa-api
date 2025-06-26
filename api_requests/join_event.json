@@ -1,0 +1,9 @@
+{
+    "name": "Erlis",
+    "preferences": [
+        {
+            "value": "Books",
+            "type": "include"
+        }
+    ]
+}

@@ -12,6 +12,7 @@ readonly class GiftDto
         public float $price,
         public ?string $productUrl,
         public ?string $giverName,
+        public ?string $receiverName,
     ) {
     }
 }

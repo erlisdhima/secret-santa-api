@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Dto\GiftDto;
+use App\Entity\GiftAssignment;
+use App\Entity\Player;
 use App\Enum\EventStatusEnum;
 use App\Repository\EventRepository;
 use App\Service\GiftAssignmentService;
@@ -67,6 +70,22 @@ class EventExchangeController extends AbstractController
     {
         $event = $this->eventRepository->find($id);
 
-        return $this->json($event->getAssignments());
+        $assignments = array_map(
+            fn (GiftAssignment $assignment) => [
+                'gift' => null !== $assignment->getGift()
+                    ? new GiftDto(
+                        $assignment->getGift()->getTitle(),
+                        $assignment->getGift()->getCategory(),
+                        $assignment->getGift()->getPrice(),
+                        $assignment->getGift()->getProductUrl(),
+                        '', // giver must be anonymous
+                        $assignment->getReceiver()->getName(),
+                    )
+                    : null,
+            ],
+            $event->getAssignments()->toArray()
+        );
+
+        return $this->json($assignments);
     }
 }

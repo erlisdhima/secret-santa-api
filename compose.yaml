@@ -1,13 +1,38 @@
-version: '3.7'
 services:
-    database:
-        image: 'mariadb:10.5'
+    nginx:
+        hostname: "secret-santa-api-nginx"
+        image: docker.io/wardenenv/nginx:1.16
+        volumes:
+            - ./:/var/www/html:cached
         environment:
-            MYSQL_ROOT_PASSWORD: password
-            MYSQL_DATABASE: main
+            - NGINX_PUBLIC=/public
         ports:
-            # To allow the host machine to access the ports below, modify the lines below.
-            # For example, to allow the host to connect to port 3306 on the container, you would change
-            # "3306" to "3306:3306". Where the first port is exposed to the host and the second is the container port.
-            # See https://docs.docker.com/compose/compose-file/compose-file-v3/#ports for more information.
-            - '3306'
+            - "8888:80"
+        depends_on:
+            - php-fpm
+
+    php-fpm:
+        hostname: "secret-santa-api-php-fpm"
+        image: docker.io/wardenenv/php-fpm:8.3
+        environment:
+            - SSH_AUTH_SOCK="/tmp/ssh-auth.sock"
+            - COMPOSER_VERSION=2
+            - COMPOSER_MEMORY_LIMIT=-1
+        volumes:
+            - ./:/var/www/html:cached
+        depends_on:
+            - db
+
+    db:
+        hostname: "secret-santa-api-mariadb"
+        image: docker.io/wardenenv/mariadb:10.4
+        environment:
+            - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-symfony}
+            - MYSQL_DATABASE=${MYSQL_DATABASE:-symfony}
+            - MYSQL_USER=${MYSQL_USER:-symfony}
+            - MYSQL_PASSWORD=${MYSQL_PASSWORD:-symfony}
+        volumes:
+            - dbdata:/var/lib/mysql
+
+volumes:
+    dbdata:

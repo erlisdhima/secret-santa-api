@@ -7,6 +7,12 @@ This application provides API endpoints for a Secret Santa game.
 3. The Player submits their gift
 4. The Organizer runs the gift exchange where gifts are automatically assigned to each player based on their preferences.
 
+### Gift assigning
+1. it automatically assigns only one gift to each player (excluding themselves)
+2. it checks against the player preferences to match closely to the preferred values
+3. it assigns it in a random way (following the preferences)
+4. if there are gifts left which do not match to the preferences of the player, a random gift is assigned.
+5. if a user has joined, but not submitted a gift, they will be removed from the game before gift assignment
 
 ## API Endpoints
 
@@ -16,8 +22,66 @@ This application provides API endpoints for a Secret Santa game.
 | `GET`  | `/api/v1/events`                        | Get List of events                         |                                                                                          |                                                                                                                                                                                       |
 | `GET`  | `/api/v1/events/{inviteCode}`           | Get event by invite code                   |                                                                                          | `inviteCode` (path, **required**)                                                                                                                                                     |
 | `POST` | `/api/v1/events/join/{inviteCode}`      | Join event as player                       | ```{ "name": "Erlis", "preferences": [{ "value": "Books", "type": "include" }] }```      | `name` (string, **required**)  <br> `preferences` (array, **optional**) - items (**optional**): <br> `value` (string, **required**) <br>`type` (`include`/`exclude`, **required**)    |
+| `GET`  | `/api/v1/events/{id}/players`           | Get list of players for an event           |                                                                                          |                                                                                                                                                                                       |
 | `POST` | `/api/v1/events/{id}/gift`              | Submit a gift                              | ```{ "playerId": 1, "title": "Wireless Mouse", "category": "Tech", "price": 29.99,  }``` | `playerId` (int, **required**) <br> `title` (string, **required**) <br> `category` (string, **required**) <br> `price` (float, **required**) <br> `productUrl` (string, **optional**) |
 | `GET`  | `/api/v1/player/{id}`                   | Get Player by ID                           |                                                                                          | `id` (path, **required**)                                                                                                                                                             |
 | `POST` | `/api/v1/events/{id}/run-gift-exchange` | Assign gifts automatically by event id     |                                                                                          | `id` (path, **required**)                                                                                                                                                             |
 | `GET`  | `/api/v1/events/{id}/gift-assignments`  | View gift assignments for a given event id |                                                                                          | `id` (path, **required**)                                                                                                                                                             |
 
+Note:  
+See api_requests folder for example requests.
+
+APIs can be automatically triggered with IDEs such as Phpstorm. Make sure you create `http-client.private.env.json` inside the api_requests folder and select the dev environment in Phpstorm
+```
+{
+    "dev": {
+        "apiUrl": "http://localhost:8888/api/v1"
+    }
+}
+```
+
+## Setup instructions
+This project runs on docker, and docker and docker compose must be installed before continuing.  
+A custom port has been set (8888), and can be changed on the project's root compose.yaml
+
+### 1. Get the project
+Clone/download this repository in your local machine
+
+### 2. Update your .env file
+```
+DATABASE_URL=mysql://symfony:symfony@db/symfony
+```
+
+### 3. Spin up the containers
+```
+docker compose up -d
+```
+
+### 4. Run the migrations
+```
+docker exec <container-name> php bin/console doctrine:migrations:migrate
+docker exec <container-name> php bin/console cache:clear
+```
+Container name should be the same as your project's folder with the container name prefix (php-fpm-1), i.e. secret-santa-api-php-fpm-1  
+You can confirm by running `docker compose ps`
+
+The Symfony 7 project should be accessible via http://localhost:8888/
+
+### 5. Import sample data (optional), i.e. data fixtures
+```
+php bin/console doctrine:fixtures:load --append
+```
+`--append` will keep the original db data (if any)
+
+### 6. Run unit tests
+```
+php bin/phpunit
+```
+
+## Future improvements
+- Add option to change event preferences (or update an event)
+- Add option to remove players
+- Add more options how the gift exchange can be run (currently it can be only automatically assigned to each player)
+- Having a chat app integrated for the game would be a nice to have
+- Make player name unique to avoid users joining multiple times
+    - alternatively a cookie can be used, but this means that the user can join in multiple browsers (a user login with an email will improve this)

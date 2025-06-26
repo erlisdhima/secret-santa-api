@@ -1,0 +1,55 @@
+### CREATE EVENT/GAME
+POST https://{{apiUrl}}/events
+Content-Type: application/json
+
+< ./create_event.json
+
+> {%
+    client.global.set("inviteCode", response.body.inviteCode);
+    client.global.set("eventId", response.body.id);
+%}
+
+### GET EVENTS
+GET https://{{apiUrl}}/events
+Content-Type: application/json
+
+### GET EVENTS BY INVITE CODE
+GET https://{{apiUrl}}/events/{{inviteCode}}
+Content-Type: application/json
+
+### JOIN EVENT
+POST https://{{apiUrl}}/events/join/{{inviteCode}}
+Content-Type: application/json
+
+< ./join_event.json
+
+> {%
+    client.global.set("playerId", response.body.player_id);
+%}
+
+### LIST PLAYERS
+GET https://{{apiUrl}}/events/{{eventId}}/players
+Content-Type: application/json
+
+### ADD GIFT
+POST {{apiUrl}}/events/{{eventId}}/submit-gift
+Content-Type: application/json
+
+{
+    "playerId": {{playerId}},
+    "title": "1984",
+    "category": "Books",
+    "price": 15,
+    "productUrl": "https://example.com/product/123"
+}
+
+### GET EVENT GIFTS
+GET {{apiUrl}}/events/{{eventId}}/gifts
+Content-Type: application/json
+
+### RUN GIFT EXCHANGE
+POST {{apiUrl}}/events/{{eventId}}/run-exchange
+Content-Type: application/json
+
+### GET GIFT ASSIGNMENTS
+GET {{apiUrl}}/events/{{eventId}}/gift-assignments

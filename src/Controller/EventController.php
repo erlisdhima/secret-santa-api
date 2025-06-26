@@ -101,6 +101,7 @@ class EventController extends AbstractController
                         $player->getGift()->getPrice(),
                         $player->getGift()->getProductUrl(),
                         $player->getGift()->getGiver()?->getName(),
+                        '', // not yet exchanged
                     )
                     : null,
             ],
@@ -120,6 +121,7 @@ class EventController extends AbstractController
                 $gift->getPrice(),
                 $gift->getProductUrl(),
                 $gift->getGiver()->getName(),
+                '', // not yet exchanged
             ),
             $event->getGifts()->toArray()
         );
