@@ -35,3 +35,5 @@
   - Only one unit test was created. More unit tests are needed. No API testing is in place.
 - **Validation**:
     - Validation needs to be re-checked. Not everything has been tested accordingly. (e.g. check if provided preferences in include are not the same as in exclude)
+- **Remove unnecessary packages**
+  - Remove packages that are not used and remove the landing page (accessed via the homepage)
