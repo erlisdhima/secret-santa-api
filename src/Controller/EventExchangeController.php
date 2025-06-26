@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Enum\EventStatusEnum;
+use App\Enum\PreferenceTypeEnum;
 use App\Repository\EventRepository;
 use App\Service\GiftAssignmentService;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -18,7 +19,7 @@ class EventExchangeController extends AbstractController
         private readonly GiftAssignmentService $giftAssignmentService,
     ) {}
 
-    #[Route('/api/v1/events/{id}/run-exchange', name: 'api_run_gift_exchange', methods: ['POST'])]
+    #[Route('/api/v1/events/{id}/run-gift-exchange', name: 'run_gift_exchange', methods: ['POST'])]
     public function runExchange(int $id): JsonResponse {
         $event = $this->eventRepository->find($id);
 
@@ -57,5 +58,13 @@ class EventExchangeController extends AbstractController
         // TODO: cleanup/remove event & data (e.g. via a cron job based on an 'older than' amount of days)
 
         return $this->json(['results' => $results]);
+    }
+
+    #[Route('/api/v1/events/{id}/gift-assignments', name: 'get_gift_assignments', methods: ['GET'])]
+    public function getExchangeResults(int $id): JsonResponse
+    {
+        $event = $this->eventRepository->find($id);
+
+        return $this->json($event->getAssignments());
     }
 }

@@ -26,7 +26,7 @@ class PlayerController extends AbstractController
     /**
      * @throws ExceptionInterface
      */
-    #[Route('/api/v1/event/join/{inviteCode}', name: 'api_player_join', methods: ['POST'])]
+    #[Route('/api/v1/events/join/{inviteCode}', name: 'player_join', methods: ['POST'])]
     public function join(string $inviteCode, Request $request): JsonResponse
     {
         $data = $this->serializer->deserialize($request->getContent(), CreatePlayerDto::class, 'json');
@@ -49,7 +49,7 @@ class PlayerController extends AbstractController
     /**
      * @throws ExceptionInterface
      */
-    #[Route('/api/v1/player/{id}/gift', name: 'api_player_submit_gift', methods: ['POST'])]
+    #[Route('/api/v1/events/{id}/gift', name: 'player_submit_gift', methods: ['POST'])]
     public function submitGift(int $id, Request $request): JsonResponse
     {
         $data = $this->serializer->deserialize($request->getContent(), SubmitGiftDto::class, 'json');
@@ -60,7 +60,7 @@ class PlayerController extends AbstractController
             return $this->json($errors, Response::HTTP_BAD_REQUEST);
         }
 
-        $gift = $this->playerService->submitGift($id, $data);
+        $gift = $this->playerService->submitGift($id, $data->playerId, $data);
 
         return $this->json([
             'message' => 'Gift submitted successfully.',
@@ -68,7 +68,7 @@ class PlayerController extends AbstractController
         ]);
     }
 
-    #[Route('/api/v1/player/{id}', name: 'api_player_get', methods: ['GET'])]
+    #[Route('/api/v1/player/{id}', name: 'get_player', methods: ['GET'])]
     public function getPlayer(int $id): JsonResponse
     {
         $player = $this->playerService->getPlayer($id);

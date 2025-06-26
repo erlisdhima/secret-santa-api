@@ -8,6 +8,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 class SubmitGiftDto
 {
     #[Assert\NotBlank]
+    #[Assert\Type(type: 'integer')]
+    #[Assert\GreaterThan(0)]
+    public int $playerId;
+
+    #[Assert\NotBlank]
     #[Assert\Length(max: 150)]
     public string $title;
 
@@ -25,11 +30,13 @@ class SubmitGiftDto
     public ?string $productUrl = null;
 
     public function __construct(
+        int $playerId,
         string $title,
         string $category,
         float $price,
         ?string $productUrl = null,
     ) {
+        $this->playerId = $playerId;
         $this->title = $title;
         $this->category = $category;
         $this->price = $price;

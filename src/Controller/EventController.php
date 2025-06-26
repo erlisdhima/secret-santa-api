@@ -4,7 +4,9 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Dto\CreateEventDto;
+use App\Dto\GiftDto;
 use App\Entity\Event;
+use App\Entity\Gift;
 use App\Repository\EventRepository;
 use App\Service\EventService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -47,7 +49,7 @@ class EventController extends AbstractController
         return $this->json($this->getEventData($event), 201);
     }
 
-    #[Route('/api/v1/events', name: 'get_event_list', methods: ['GET'])]
+    #[Route('/api/v1/events', name: 'get_events_list', methods: ['GET'])]
     public function getList(): JsonResponse
     {
         $events = $this->eventRepository->findAll();
@@ -69,6 +71,23 @@ class EventController extends AbstractController
         }
 
         return $this->json($this->getEventData($event));
+    }
+
+    #[Route('/api/v1/events/{id}/gifts', name: 'get_submitted_event_gifts', methods: ['GET'])]
+    public function getEventGifts(Event $event): JsonResponse
+    {
+        $gifts = array_map(
+            fn(Gift $gift) => new GiftDto(
+                $gift->getTitle(),
+                $gift->getCategory(),
+                $gift->getPrice(),
+                $gift->getProductUrl(),
+                $gift->getGiver()->getName(),
+            ),
+            $event->getGifts()->toArray()
+        );
+
+        return $this->json($gifts);
     }
 
     private function getEventData(Event $event): array

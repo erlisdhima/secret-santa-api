@@ -65,7 +65,9 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
-        ]
+        ],
+        "phpstan": "vendor/bin/phpstan analyse --ansi --memory-limit=1G",
+        "phpstan-cleancache": "vendor/bin/phpstan clear-result-cache"
     },
     "conflict": {
         "symfony/symfony": "*"
@@ -78,6 +80,11 @@
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^4.1",
-        "symfony/maker-bundle": "^1.63"
+        "friendsofphp/php-cs-fixer": "*",
+        "phpstan/phpstan": "*",
+        "phpunit/phpunit": "*",
+        "squizlabs/php_codesniffer": "*",
+        "symfony/maker-bundle": "^1.63",
+        "symplify/phpstan-rules": "*"
     }
 }

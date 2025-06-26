@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<ruleset name="Symfony Project">
+    <description>PHP_CodeSniffer configuration for Symfony coding standards.</description>
+
+    <!-- Include the Symfony and PSR-12 standards -->
+    <rule ref="PSR12"/>
+    <rule ref="Symfony"/>
+
+    <!-- Exclude the vendor directory -->
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+
+    <!-- Exclude cache and var directories -->
+    <exclude-pattern>*/var/*</exclude-pattern>
+    <exclude-pattern>*/cache/*</exclude-pattern>
+
+    <!-- Set the encoding -->
+    <config name="encoding" value="utf-8"/>
+
+    <!-- Set the tab width (Symfony uses 4 spaces) -->
+    <arg name="tab-width" value="4"/>
+
+    <!-- Add custom rules or overrides here -->
+</ruleset>

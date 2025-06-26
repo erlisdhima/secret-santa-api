@@ -10,6 +10,8 @@ use App\Entity\Gift;
 use App\Entity\Player;
 use App\Entity\Preference;
 use App\Enum\PreferenceTypeEnum;
+use App\Factory\PlayerFactory;
+use App\Factory\PreferenceFactory;
 use App\Repository\EventRepository;
 use App\Repository\PlayerRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,9 +23,11 @@ readonly class PlayerService implements PlayerServiceInterface
         private EntityManagerInterface $entityManager,
         private EventRepository $eventRepository,
         private PlayerRepository $playerRepository,
+        private PlayerFactory $playerFactory,
+        private PreferenceFactory $preferenceFactory,
     ) {}
 
-    public function joinEvent(string $inviteCode, CreatePlayerDto $dto): Player
+    public function joinEvent(string $inviteCode, CreatePlayerDto $playerDto): Player
     {
         $event = $this->eventRepository->findOneBy(['inviteCode' => $inviteCode]);
 
@@ -35,19 +39,18 @@ readonly class PlayerService implements PlayerServiceInterface
             throw new \RuntimeException('Maximum players reached.');
         }
 
-        $player = new Player();
-        $player->setName($dto->name);
-        $player->setEvent($event);
+        $player = $this->playerFactory->create($playerDto->name, $event);
 
-        if (!empty($dto->preferences)) {
-            foreach ($dto->preferences as $item) {
+        if (!empty($playerDto->preferences)) {
+            foreach ($playerDto->preferences as $item) {
                 // users can select multiple preferences
                 $multiPrefs = \explode(',', $item['value']);
                 foreach ($multiPrefs as $pref) {
-                    $preference = new Preference();
-                    $preference->setValue($pref);
-                    $preference->setType(PreferenceTypeEnum::from($item['type']));
-                    $preference->setPlayer($player);
+                    $preference = $this->preferenceFactory->create(
+                        $pref,
+                        PreferenceTypeEnum::from($item['type']),
+                        $player,
+                    );
                     $player->addPreference($preference);
                 }
             }
@@ -59,8 +62,9 @@ readonly class PlayerService implements PlayerServiceInterface
         return $player;
     }
 
-    public function submitGift(int $playerId, SubmitGiftDto $dto): Gift
+    public function submitGift(int $eventId, int $playerId, SubmitGiftDto $dto): Gift
     {
+        $event = $this->eventRepository->find($eventId);
         $player = $this->playerRepository->find($playerId);
 
         if (!$player) {
@@ -72,7 +76,7 @@ readonly class PlayerService implements PlayerServiceInterface
         $gift->setCategory($dto->category);
         $gift->setPrice($dto->price);
         $gift->setProductUrl($dto->productUrl);
-        $gift->setEvent($player->getEvent());
+        $gift->setEvent($event);
         $gift->setGiver($player);
 
         $this->entityManager->persist($gift);

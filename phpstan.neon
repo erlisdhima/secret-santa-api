@@ -1,0 +1,14 @@
+parameters:
+    level: max
+    paths:
+        - src
+#    scanDirectories: #uncomment if you want to create stub files
+#       - stubs
+    excludePaths:
+        analyseAndScan:
+            - */tests/*
+
+includes:
+    - phpstan-baseline.neon
+    - vendor/symplify/phpstan-rules/config/symfony-rules.neon
+#    - vendor/symplify/phpstan-rules/config/symfony-config-rules.neon
